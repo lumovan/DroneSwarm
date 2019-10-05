@@ -9,6 +9,7 @@ mydb = mysql.connector.connect(
     auth_plugin="mysql_native_password"
 )
 
+
 def main():
     c = mydb.cursor()
     createTable(c)
