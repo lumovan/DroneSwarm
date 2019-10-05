@@ -1,40 +1,34 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Configuration;
-using System.Data;
-
-using MySql.Data;
+﻿using UnityEngine;
 using MySql.Data.MySqlClient;
 
 public class drone_places : MonoBehaviour
 {
-    private MySqlConnection con = null;
-    private MySqlCommand cmd = null;
-    private MySqlDataReader rdr = null;
+    private MySqlConnection _con = null;
+    private MySqlCommand _cmd = null;
+    private MySqlDataReader _rdr = null;
     
     private string connectionString = "localhost;Bois;HackUpstate";
 
     // Start is called before the first frame update
     void Start()
     {
-        con = new MySqlConnection(connectionString);
-        con.Open();
-        Debug.Log("Connection state:" +con.State);
+        _con = new MySqlConnection(connectionString);
+        _con.Open();
+        Debug.Log("Connection state:" +_con.State);
         
         string cmd_string = "SELECT * FROM droneslocation";
-        cmd = new MySqlCommand(cmd_string, con);
+        _cmd = new MySqlCommand(cmd_string, _con);
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        using (rdr = cmd.ExecuteReader())
+        using (_rdr = _cmd.ExecuteReader())
         {
-            while (rdr.Read())
+            while (_rdr.Read())
             {
-                Debug.Log(rdr[0] + " -- " + rdr[1]);
+                Debug.Log(_rdr[0] + " -- " + _rdr[1]);
             }
         }
         {
