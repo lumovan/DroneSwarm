@@ -25,27 +25,41 @@ fieldPort = 6666
 
 def drone_connect():
     """
-
+    Returns a socket which is tied to the server.
+    Drone holds this socket in a variable for future communication.
     :return:
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("Socket successfully created")
+    except socket.error as err:
+        print("socket creation failed with error %s" % err)
     s.connect((fieldIP, fieldPort))
-    print("connected")
+    print("connected to " + fieldIP)
     return s
 
 
-def drone_send_info():
-    print()
+def drone_send_info(s, message):
+    """
+    Sends a message to the server
+    :param s: the socket on which the drone is connected to the server
+    :param message: the message to be sent
+    :return: success status (None == success)
+    """
+    return s.sendall(str.encode(str(message)))
 
 
 def main():
-    s = drone_connect()
-    for i in range(10):
-        s.sendall(str.encode(str(i)))
-        sleep(1)
-    # data = s.recv(1024)  # same buffsize
-    # print(str(data))
-    s.sendall(str.encode("*FULLSTOP*"))
+    s1 = drone_connect()
+    s2 = drone_connect()
+    s3 = drone_connect()
+    print(drone_send_info(s1, "drone 1 checking in"))
+    print(drone_send_info(s2, "drone 2 checking in"))
+    print(drone_send_info(s3, "drone 3 checking in"))
+    print(s1.getsockname())
+    print(s2.getsockname())
+    print(s3.getsockname())
 
 
 if __name__ == '__main__':
