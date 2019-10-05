@@ -20,14 +20,25 @@ public class drone_places : MonoBehaviour
     {
         con = new MySqlConnection(connectionString);
         con.Open();
+        Debug.Log("Connection state:" +con.State);
+        
         string cmd_string = "SELECT * FROM droneslocation";
-        cmd = new MySqlCommand(cmd_string);
+        cmd = new MySqlCommand(cmd_string, con);
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        using (rdr = cmd.ExecuteReader())
+        {
+            while (rdr.Read())
+            {
+                Debug.Log(rdr[0] + " -- " + rdr[1]);
+            }
+        }
+        {
+            
+        }
     }
 }
