@@ -16,7 +16,7 @@ import socket  # for sockets
 #       -then send new position new velocity, request to the field for locations of close drones    #
 #       -accept array list of drone locations from field                                            #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-fieldIP = '192.168.137.13' #1036.252.145 209.217.218.34
+fieldIP = 'localhost' #1036.252.145 209.217.218.34
 fieldPort = 6666
 
 
