@@ -12,7 +12,7 @@ import socket  # for sockets
 
 
 def main():
-    for x in range(15):
+    for x in range(25):
         print(x)
 
 
