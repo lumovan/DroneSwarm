@@ -18,6 +18,7 @@ class DroneData:
         self.name = name
 
 
+
 class Drone:
     def __init__(self, name, position, velocity):
         self.data = DroneData(position, velocity, name)

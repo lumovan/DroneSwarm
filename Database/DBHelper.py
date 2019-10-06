@@ -10,6 +10,7 @@ import mysql.connector
 
 from Database.connection import mydb
 
+
 class DBHelper:
 
     ViewDistance = 50
@@ -30,7 +31,7 @@ class DBHelper:
             count += 1
         return count
 
-    def setPosVel(self, droneID, dronePos, droneVel):
+    def update(self, droneID, dronePos, droneVel):
         sql = "UPDATE droneslocation SET locX = {}, locY = {}, locZ = {} WHERE id = {}".format(
             dronePos[0], dronePos[1], dronePos[2], droneID)
         sql2 = "UPDATE dronesdirection SET dirX = {}, dirY = {}, dirZ = {} WHERE id = {}".format(
