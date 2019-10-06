@@ -8,7 +8,7 @@ Python Version: 3.7
 The networking framework for our drones.  Middleman for the drones and the field.
 """
 
-from Drones.Drone import DroneData #for testing REMOVE LATER
+# from Drones.Drone import DroneData # for testing REMOVE LATER
 import socket  # for sockets
 import pickle  # for sending drone data to server
 from time import sleep
