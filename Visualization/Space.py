@@ -66,11 +66,11 @@ class ServerThread(Thread):
                         lock.release()
                         break
 
-
     def sendNeighborghs(self, id, location):
         # droneList = getLocalDronesSphere(id, location)
         lock.acquire()
-        droneList = self.db.getLocalDronesSquare(id, location)
+        # droneList = self.db.getLocalDronesSquare(id, location)
+        droneList = self.db.getLocalDronesSphere(id, location)
         lock.release()
 
         numDrones = len(droneList)
