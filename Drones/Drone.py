@@ -30,11 +30,12 @@ class DroneData:
 class Drone:
     """
     Drone contains functionality for drone movement and keeps track of the following fields:
-        - Data ~ an instance of DroneData that keeps track of velocity, position, and name of this drone
+        - Data ~ an instance of DroneData that keeps track of velocity, position,
+            and the name of this drone (a unique identifier generated upon drone creation)
         - Socket ~ the connection this drone has to the Space server
         - Neighbors ~ a list of drones within the drone's view distance that the drone uses to position and move itself
     """
-    def __init__(self, velocity, position, name):
+    def __init__(self, velocity, position):
         """
         Initializes drone data, connects to server, and sends data object to server
         Velocity, position, and name can be accessed through drone_object.data.x where x = field to be accessed
@@ -42,11 +43,11 @@ class Drone:
         :param position: the initial position of the drone
         :param name: the name of the drone
         """
-        # id = "\"" + uuid.uuid4().hex + "\""            # generates a unique ID based off the program run
-        self.data = DroneData(velocity, position, name)  # initialize data
-        self.socket = drone_connect()                    # send connect message to server and initializes drone socket
-        drone_send_info(self.socket, self.data)          # send initial drone info to server
-        # self.neighbors = KYLE IS IMPLEMENTING RECEPTION OF NEIGHBOR LIST FROM SERVER
+        drone_id = uuid.uuid4().hex             # generates a unique ID based off the program run
+        self.data = DroneData(velocity, position, drone_id)   # initialize data
+        self.socket = drone_connect()                     # send connect message to server and initializes drone socket
+        drone_send_info(self.socket, self.data)           # send initial drone info to server
+        self.neighbors = drone_receive_info(self.socket)  # receive initial neighbor list
 
 # move drone forward in the x direction
     def update(self):
@@ -59,7 +60,9 @@ class Drone:
 
 def main():
     # TEST DRONE COMMUNICATION ETC HERE
-    print("Beaner")
+    testDrone = Drone((1.0, 0.0, 1.0), (100.0, 100.0, 100.0))
+    for droneData in testDrone.neighbors:
+        print(droneData.name, droneData.position, droneData.velocity)
 
 
 if __name__ == '__main__':
