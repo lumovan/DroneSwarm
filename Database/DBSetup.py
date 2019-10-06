@@ -25,15 +25,13 @@ def createTable(c):
     sql2 = "CREATE TABLE dronesLocation(id char(32) PRIMARY KEY, " \
            " locX DOUBLE(8,4) NOT NULL," \
            " locY DOUBLE(8,4) NOT NULL," \
-           " locZ DOUBLE(8,4) NOT NULL)"
-
-    sql3 = "CREATE TABLE dronesDirection(id char(32) PRIMARY KEY, " \
+           " locZ DOUBLE(8,4) NOT NULL," \
            " dirX DOUBLE(8,4) NOT NULL," \
            " dirY DOUBLE(8,4) NOT NULL," \
            " dirZ DOUBLE(8,4) NOT NULL)"
+
     c.execute(sql)
     c.execute(sql2)
-    c.execute(sql3)
     mydb.commit()
 
 
