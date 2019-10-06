@@ -40,6 +40,8 @@ namespace Drones
         //The command to pull info from MySql
         private MySqlCommand _command;
 
+        private int droneCount = 0;
+
         // Start is called before the first frame update
         /// <summary>
         /// The function called at the start of the program to connect to the MySql database and create all the drones
@@ -47,9 +49,7 @@ namespace Drones
         /// </summary>
         public CreateDrone()
         {
-//            _connection = creationDatabase.getConnection();
-//            _command = creationDatabase.makeCommand("SELECT", "id", "drones");
-            
+
         }
 
         public List<Drone> createList()
@@ -57,7 +57,7 @@ namespace Drones
             _connectionString.Server = "192.168.137.5";
             _connectionString.UserID = "Bois";
             _connectionString.Password = "HackUpstate";
-            _connectionString.Database = "prep";
+            _connectionString.Database = "drones";
             _connection = new MySqlConnection(_connectionString.ToString());
             _connection.Open();
             _command = new MySqlCommand("SELECT id FROM drones", _connection);
@@ -65,16 +65,46 @@ namespace Drones
             _reader = _command.ExecuteReader();
             while (_reader.Read())
             {
-                Debug.Log("Creating Drone");
                 drone = new Drone();
-                _uniqueID = _reader["id"].ToString();
-                Debug.Log("Hello");
-                drone.id = _uniqueID;
+                drone.id = _reader["id"].ToString();
                 drone.droneNum = _uniqueNum++;
                 drones.Add(drone);
+                droneCount++;
             }
             _connection.Close();
+            _reader.Close();
             return drones;
+        }
+
+        public List<Drone> addNewDrones(List<Drone> drones, List<GameObject> objs)
+        {
+            _connectionString.Server = "192.168.137.5";
+            _connectionString.UserID = "Bois";
+            _connectionString.Password = "HackUpstate";
+            _connectionString.Database = "drones";
+            _connection = new MySqlConnection(_connectionString.ToString());
+            _connection.Open();
+            _command = new MySqlCommand("SELECT COUNT(id) FROM drones", _connection);
+            var ids = Convert.ToInt32(_command.ExecuteScalar());
+            var newDrones = new List<Drone>();
+            while (droneCount < ids)
+            {
+                _command = new MySqlCommand("SELECT id FROM drones", _connection);
+                _reader = _command.ExecuteReader();
+                while (_reader.Read())
+                {
+                    if (!objs.Contains(GameObject.Find(_reader["id"].ToString())))
+                    {
+                        drone = new Drone();
+                        drone.id = _reader["id"].ToString();
+                        drone.droneNum = _uniqueNum++;
+                        newDrones.Add(drone);
+                    }
+                }
+                _reader.Close();
+            }
+
+            return newDrones;
         }
     }
 }

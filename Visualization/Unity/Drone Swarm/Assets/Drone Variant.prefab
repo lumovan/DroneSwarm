@@ -10,7 +10,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 5f674f9cef41d3743b943c0d52be47b0,
         type: 3}
       propertyPath: m_Name
-      value: 12
+      value: Drone Variant
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 5f674f9cef41d3743b943c0d52be47b0,
         type: 3}
@@ -65,6 +65,41 @@ PrefabInstance:
     - target: {fileID: -4216859302048453862, guid: 5f674f9cef41d3743b943c0d52be47b0,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -4216859302048453862, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: -5716681864270162303, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_PlayAutomatically
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5716681864270162303, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2416733968201007103, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2416733968201007103, guid: 5f674f9cef41d3743b943c0d52be47b0,
+        type: 3}
+      propertyPath: m_DynamicOccludee
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
