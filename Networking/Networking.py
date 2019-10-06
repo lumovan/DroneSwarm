@@ -52,23 +52,20 @@ def drone_send_info(s, data):
     return s.send(data_string)
 
 
-def main():
-    dronelist = []
-    for i in range(1):
-        dronelist.append(drone_connect())
-
-    for i in range(10):
-        data = DroneData()
-        data.id = ""
-        num = 0.0
-        data.position = (num, num, num)
-        data.velocity = (num, num, num)
-        print(drone_send_info(dronelist[0], data))
-        # sleep(1)
-    dronelist[0].close
-
-
-
+# def main():
+#     dronelist = []
+#     for i in range(1):
+#         dronelist.append(drone_connect())
+# 
+#     for i in range(10):
+#         data = DroneData()
+#         data.id = ""
+#         num = 0.0
+#         data.position = (num, num, num)
+#         data.velocity = (num, num, num)
+#         print(drone_send_info(dronelist[0], data))
+#         # sleep(1)
+#     dronelist[0].close
 
     # print(drone_send_info(s2, "drone 2 checking in"))
     # s2.close()
@@ -76,5 +73,5 @@ def main():
     # s3.close()
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
