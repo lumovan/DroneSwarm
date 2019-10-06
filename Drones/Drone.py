@@ -12,22 +12,29 @@ MIN_DISTANCE = 5
 
 
 class DroneData:
-    def __init__(self, position, velocity, id):
+    def __init__(self, position, velocity, name):
         self.position = position
         self.velocity = velocity
-        self.id = id
+        self.name = name
 
 
 class Drone:
-    def __init__(self):
-        self.data = DroneData()
-        self.data.position = (0.0, 0.0, 0.0)
+    def __init__(self, name, position, velocity):
+        self.data = DroneData(position, velocity, name)
         self.socket = drone_connect()
 
 # move drone forward in the x direction
     def update(self, drone_list):
         self.data.velocity = (1.0, 0.0, 0.0)
 
+
+def main():
+        drone1 = Drone('One', (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))
+        print(drone_send_info(drone1.socket, drone1.data))
+
+
+if __name__ == '__main__':
+    main()
 
 
 
