@@ -4,7 +4,7 @@ Used by all the drones to communicate between all the drones near it
 import socket
 import pickle
 from threading import Thread
-import Drones.Drone as d
+from Drones.Drone import DroneData
 
 TCP_IP = "192.168.137.5"
 TCP_PORT = 6666
@@ -23,9 +23,8 @@ class ServerThread(Thread):
             data = conn.recv(200)
             if data:
                 data = pickle.loads(data)
-                if isinstance(data, d.DroneData):
-                    print("Better Received Position: ", data.position, "\tvel: ", data.velocity, "\tID: ", data.id)
-
+                if isinstance(data, DroneData):
+                    print("Better Received Position: ", data.position, "\tvel: ", data.velocity, "\tName: ", data.name)
                 print("Server Received: ", data)
             else:
                 break
