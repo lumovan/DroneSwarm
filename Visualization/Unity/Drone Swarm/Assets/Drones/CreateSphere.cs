@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class pull_location : MonoBehaviour
+public class CreateSphere : MonoBehaviour
 {
-
-
     // Start is called before the first frame update
     void Start()
     {
-        
+        GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
     }
 
     // Update is called once per frame
