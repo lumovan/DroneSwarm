@@ -6,6 +6,8 @@ Date last modified: 10/06/2019
 Python Version: 3.7
 
 The networking framework for our drones.  Middleman for the drones and the field.
+Drone data is transported to and from the server by pickling DroneData objects.
+    (Pickling involves translating an object into binary data that can be sent through the socket)
 """
 
 import socket  # for sockets
@@ -25,8 +27,7 @@ fieldPort = 6666
 
 def drone_connect():
     """
-    Connects a drone to the server
-    Drone holds onto returned socket for future communication
+    Connects a drone to the server (Drone holds onto returned socket for future communication)
     :return: the socket which is tied to the server
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,12 +41,53 @@ def drone_connect():
     return s
 
 
+def drone_disconnect(s):
+    """
+    Disconnects a drone from the server
+    :param s: the socket through which the drone is connected to the server
+    :return:
+    """
+    s.shutdown()
+    s.close()
+
+
 def drone_send_info(s, data):
     """
     Sends a drone data object to the server
-    :param s: the socket on which the drone is connected to the server
+    :param s: the socket through which the drone is connected to the server
     :param data: the data to be sent
     :return: success status (None == success)
     """
     data_string = pickle.dumps(data)
     return s.sendall(data_string)
+
+
+def drone_receive_info(s):
+    """
+    Receives neighbor information from the Space server in two steps:
+        1) receives number of drones data classes being sent in step 2 (the number of neighbors around the drone)
+        2) receives a list of neighbors
+    :param s: the socket through which the drone is connected to the server
+    :return: the list of neighbors (as DroneData objects)
+    """
+    number_string = s.recv(50)  # Step 1 ~ received initially as a string
+    number = -1
+    print("Num drones string: ", number_string)
+    if number_string:
+        number = int(number_string)
+        print("Number of drones incoming: " + str(number))
+        s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received
+    else:
+        print("NO NUMBER RECEIVED")
+        return None
+
+    if number == 0:
+        return None
+    drone_list_pickled = s.recv(number * 200)  # Step 2
+    if drone_list_pickled:
+        drone_list = pickle.loads(drone_list_pickled)  # unpickling the list from binary data back to a list
+        if isinstance(drone_list, list):
+            return drone_list
+        else:
+            print("DID NOT RECEIVE A LIST IN THE PICKLE, MARK!")
+            return None
