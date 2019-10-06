@@ -12,10 +12,11 @@ This file contains the classes for the drone objects and the data objects that a
 import random
 from Networking.Networking import *
 import uuid
-from Visualization.Space import FIELDDIM
 # global variable for the maximum acceleration a drone can do
 MAX_ACCEL = 50
 MIN_DISTANCE = 5
+FIELDDIM = 1000
+
 
 class DroneData:
     """
@@ -74,7 +75,7 @@ def main():
     drone_list = []
     # make 10 drones with random x,y,z(0, FIELDDIM) and random velocity(-5, 5)
     for i in range(0, 10):
-        drone_list[i].append(Drone(((round(random.uniform(0, FIELDDIM), 3)),
+        drone_list.append(Drone(((round(random.uniform(0, FIELDDIM), 3)),
                               (round(random.uniform(0, FIELDDIM), 3)),
                               (round(random.uniform(0, FIELDDIM), 3))),
                              ((round(random.uniform(-5, 5), 3)),
