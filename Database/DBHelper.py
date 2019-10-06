@@ -17,7 +17,7 @@ class DBHelper:
         self.c = mydb.cursor()
         self.ViewDistance = 100
 
-    def getLocalDrones(self, droneID, droneLocation):
+    def getLocalDronesSquare(self, droneID, droneLocation):
         droneID = "\"" + droneID + "\""
         sql = "SELECT id, locX, locY, locZ, dirX, dirY, dirZ FROM droneslocation WHERE " \
               "locX <= {} AND locX >= {} AND " \
@@ -27,6 +27,23 @@ class DBHelper:
                      droneLocation[1] + self.ViewDistance, droneLocation[1] - self.ViewDistance,
                      droneLocation[2] + self.ViewDistance, droneLocation[2] - self.ViewDistance,
                     droneID)
+
+        self.c.execute(sql)
+
+        neighbors = []
+        for tb in self.c:
+            neighbors.append(DroneData(tb[0], tb[1:4], tb[4:7]))
+        # print(neighbors)
+        return neighbors
+
+    def getLocalDronesSphere(self, droneID, droneLocation):
+        droneID = "\"" + droneID + "\""
+        sql = "SELECT id, locX, locY, locZ, dirX, dirY, dirZ FROM droneslocation WHERE " \
+              "POWER({} - locX, 2) + " \
+              "POWER({} - locY, 2) + " \
+              "POWER({} - locZ, 2) <= " \
+              "POWER({}, 2) AND id != {}"\
+            .format(droneLocation[0], droneLocation[1], droneLocation[2], self.ViewDistance, droneID)
 
         self.c.execute(sql)
 
@@ -62,5 +79,6 @@ class DBHelper:
         mydb.commit()
 
     def clearTables(self):
+        print("Tables clearned")
         self.c.execute("TRUNCATE TABLE drones")
         mydb.commit()
