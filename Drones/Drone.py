@@ -11,7 +11,7 @@ This file contains the classes for the drone objects and the data objects that a
 """
 
 from Networking.Networking import *
-
+import uuid
 # global variable for the maximum acceleration a drone can do
 MAX_ACCEL = 50
 MIN_DISTANCE = 5
@@ -42,6 +42,7 @@ class Drone:
         :param position: the initial position of the drone
         :param name: the name of the drone
         """
+        # id = "\"" + uuid.uuid4().hex + "\""            # generates a unique ID based off the program run
         self.data = DroneData(velocity, position, name)  # initialize data
         self.socket = drone_connect()                    # send connect message to server and initializes drone socket
         drone_send_info(self.socket, self.data)          # send initial drone info to server

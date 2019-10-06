@@ -20,6 +20,9 @@ class DBHelper:
         global c
 
     def getLocalDrones(self, droneLocation):
+        sql = "".format()
+        c.execute()
+        mydb.commit()
         pass
 
     def getNumDrones(self):
