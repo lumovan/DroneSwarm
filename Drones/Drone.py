@@ -65,7 +65,6 @@ class Drone:
         :return:
         """
         self.data.apply_velocity()
-        print("My data: ", self.data.velocity, self.data.position)
         drone_send_info(self.socket, self.data)
         self.neighbors = drone_receive_info(self.socket)
 
@@ -80,7 +79,7 @@ def main():
         else:
             print("No neighbors :(")
         testDrone.update()
-        sleep(.1)
+        # sleep(.1)
 
 
 if __name__ == '__main__':
