@@ -72,11 +72,9 @@ def drone_receive_info(s):
     """
     number_string = s.recv(50)  # Step 1 ~ received initially as a string
     number = -1
-    print("Num drones string: ", number_string)
     if number_string:
         number = int(number_string)
-        print("Number of drones incoming: " + str(number))
-        s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received
+        s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received ~ message means nothing
     else:
         print("NO NUMBER RECEIVED")
         return None
