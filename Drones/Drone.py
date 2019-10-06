@@ -9,12 +9,13 @@ Python Version: 3.7
 
 This file contains the classes for the drone objects and the data objects that are sent to the server.
 """
-
+import random
 from Networking.Networking import *
 import uuid
 # global variable for the maximum acceleration a drone can do
 MAX_ACCEL = 50
 MIN_DISTANCE = 5
+FIELDDIM = 1000
 
 
 class DroneData:
@@ -71,14 +72,26 @@ class Drone:
 
 def main():
     # TEST DRONE COMMUNICATION ETC HERE
-    testDrone = Drone((1.0, 0.0, 1.0), (100.0, 100.0, 100.0))
-    while True:
-        if testDrone.neighbors:
-            for droneData in testDrone.neighbors:
-                print(droneData.name, droneData.position, droneData.velocity)
-        else:
-            print("No neighbors :(")
-        testDrone.update()
+    drone_list = []
+    # make 10 drones with random x,y,z(0, FIELDDIM) and random velocity(-5, 5)
+    for i in range(0, 10):
+        drone_list.append(Drone(((round(random.uniform(-5, 5), 3)),
+                              (round(random.uniform(-5, 5), 3)),
+                              (round(random.uniform(-5, 5), 3))),
+                                 ((round(random.uniform(0, FIELDDIM), 3)),
+                              (round(random.uniform(0, FIELDDIM), 3)),
+                              (round(random.uniform(0, FIELDDIM), 3)))))
+    # while True:
+    #     for i in drone_list:
+    #         if i.neighbors:
+    #             for droneData in i.neighbors:
+    #                 print(droneData.name, droneData.position, droneData.velocity)
+    #         else:
+    #             print("No neighbors :(")
+    #         i.update()
+    for i in drone_list:
+        print(i)
+            # sleep(.1)
 
 
 if __name__ == '__main__':
