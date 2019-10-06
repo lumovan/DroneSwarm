@@ -12,22 +12,14 @@ Drone data is transported to and from the server by pickling DroneData objects.
 
 import socket  # for sockets
 import pickle  # for sending drone data to server
-from time import sleep
 
-# # # # # # # # # # # # # # # # # # Networking Thoughts Box # # # # # # # # # # # # # # # # # # # # #
-# Drones need to:                                                                                   #
-#   -connect with the field -> send ID, position, velocity                                          #
-#       -then send new position new velocity, request to the field for locations of close drones    #
-#       -accept array list of drone locations from field                                            #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-fieldIP = '192.168.137.5' #1036.252.145 209.217.218.34
+fieldIP = '192.168.137.5'
 fieldPort = 6666
 
 
 def drone_connect():
     """
-    Connects a drone to the server (Drone holds onto returned socket for future communication)
+    Connects a drone to the server
     :return: the socket which is tied to the server
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -43,21 +35,21 @@ def drone_disconnect(s):
     """
     Disconnects a drone from the server
     :param s: the socket through which the drone is connected to the server
-    :return:
+    :return: success!
     """
     s.shutdown()
     s.close()
+    return 1
 
 
 def drone_send_info(s, data):
     """
-    Sends a drone data object to the server
+    Sends a DroneData object to the server
     :param s: the socket through which the drone is connected to the server
     :param data: the data to be sent
     :return: success status (None == success)
     """
-    protocol = pickle.HIGHEST_PROTOCOL
-    data_string = pickle.dumps(data, protocol)
+    data_string = pickle.dumps(data)
     return s.sendall(data_string)
 
 
@@ -70,21 +62,15 @@ def drone_receive_info(s):
     :return: the list of neighbors (as DroneData objects) - None means no neighbors or error
     """
     number_string = s.recv(50)  # Step 1 ~ received initially as a string
-    number = -1
-    if number_string:
-        number = int(number_string)
-        if number == 0:  # if no neighbors, skip the rest of the process
-            return None
-        s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received ~ message means nothing
-    else:
-        print("NO NUMBER RECEIVED")
+    number = int(number_string)
+    if number == 0:  # if no neighbors, skip the rest of the process and return no neighbors
         return None
+    s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received ~ message means nothing
 
     drone_list_pickled = s.recv(number * 200)  # Step 2
-    if drone_list_pickled:
-        drone_list = pickle.loads(drone_list_pickled)  # unpickling the list from binary data back to a list
-        if isinstance(drone_list, list):
-            return drone_list
-        else:
-            print("DID NOT RECEIVE A LIST IN THE PICKLE, MARK!")
-            return None
+    drone_list = pickle.loads(drone_list_pickled)  # unpickling the list from binary data back to a list
+    if isinstance(drone_list, list):
+        return drone_list
+    else:
+        print("DID NOT RECEIVE A LIST IN THE PICKLE, MARK!")  # in case a mysterious erroneous pickle is sent
+        return None
