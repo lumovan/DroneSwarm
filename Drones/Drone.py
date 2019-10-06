@@ -11,11 +11,15 @@ This file contains the classes for the drone objects and the data objects that a
 """
 import random
 from Networking.Networking import *
+from time import sleep
+from threading import Thread
 import uuid
+
 # global variable for the maximum acceleration a drone can do
 MAX_ACCEL = 50
 MIN_DISTANCE = 5
 FIELDDIM = 1000
+drone_threads = []
 
 
 class DroneData:
@@ -38,8 +42,7 @@ class DroneData:
         self.position = newTuple
 
 
-
-class Drone:
+class Drone(Thread):
     """
     Drone contains functionality for drone movement and keeps track of the following fields:
         - Data ~ an instance of DroneData that keeps track of velocity, position,
@@ -48,6 +51,7 @@ class Drone:
         - Neighbors ~ a list of drones within the drone's view distance that the drone uses to position and move itself
     """
     def __init__(self, velocity, position):
+        Thread.__init__(self)
         """
         Initializes drone data, connects to server, and sends data object to server
         Velocity, position, and name can be accessed through drone_object.data.x where x = field to be accessed
@@ -60,50 +64,35 @@ class Drone:
         drone_send_info(self.socket, self.data)           # send initial drone info to server
         self.neighbors = drone_receive_info(self.socket)  # receive initial neighbor list
 
-    def update(self):
+    def run(self):
         """
         The logic that adjusts each drone's positioning based off of the drones within its field of vision
         :return:
         """
-        self.data.apply_velocity()
-        drone_send_info(self.socket, self.data)
-        self.neighbors = drone_receive_info(self.socket)
+        while 1:
+            sleep(.1)
+            print("hey")
+            self.data.apply_velocity()
+            drone_send_info(self.socket, self.data)
+            self.neighbors = drone_receive_info(self.socket)
+
+
+def init_drone_field():
+    for i in range(1, 2):
+        # sleep(1)
+        newDrone = Drone((i, i, i), (i, i, i))
+        newDrone.start()
+
+    while 1:
+        pass
+        # newDrone.start()
+        # drone_threads.append(newDrone)
 
 
 def main():
     # TEST DRONE COMMUNICATION ETC HERE
-    drone_list = []
-    # make 10 drones with random x,y,z(0, FIELDDIM) and random velocity(-5, 5)
-    for i in range(0, 10):
-        drone_list.append(Drone(((round(random.uniform(-5, 5), 3)),
-                              (round(random.uniform(-5, 5), 3)),
-                              (round(random.uniform(-5, 5), 3))),
-                                 ((round(random.uniform(0, FIELDDIM), 3)),
-                              (round(random.uniform(0, FIELDDIM), 3)),
-                              (round(random.uniform(0, FIELDDIM), 3)))))
-    # while True:
-    #     for i in drone_list:
-    #         if i.neighbors:
-    #             for droneData in i.neighbors:
-    #                 print(droneData.name, droneData.position, droneData.velocity)
-    #         else:
-    #             print("No neighbors :(")
-    #         i.update()
-    for i in drone_list:
-        print(i)
-            # sleep(.1)
+    init_drone_field()
 
 
 if __name__ == '__main__':
     main()
-
-
-"""
-average = 0
-        if len(drone_list) != 0:
-            for i in range(0, len(drone_list)):
-                avg = 0.0
-                for j in range(len(getattr(drone_list[i], 'position'))):
-                    avg += j
-                average += avg / 3
-"""
