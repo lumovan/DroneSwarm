@@ -29,16 +29,6 @@ class DroneData:
         self.position = position
         self.name = name
 
-    def apply_velocity(self):
-        """
-        Adds velocity to position
-        :return: None
-        """
-        newTuple = (self.position[0] + self.velocity[0],
-                    self.position[1] + self.velocity[1],
-                    self.position[2] + self.velocity[2])
-        self.position = newTuple
-
 
 class Drone(Thread):
     """
@@ -68,26 +58,42 @@ class Drone(Thread):
         movement_influence_vector = []
         for i in range(3):
             if self.data.position[i] + 50 >= FIELDDIM:
-                movement_influence_vector.append(-.5 / (1/(FIELDDIM - self.data.position[i])))
+                movement_influence_vector.append(50 * (-.5 / (1/(FIELDDIM - self.data.position[i]))))
             else:
                 movement_influence_vector.append(0)
 
             if self.data.position[i] - 50 <= 0:
-                movement_influence_vector.append(.5 / (1/(self.data.position[i])))
+                movement_influence_vector.append(50 * (.5 / (1/(self.data.position[i]))))
             else:
                 movement_influence_vector.append(0)
 
+        self.data.velocity = add_vectors(self.data.velocity, movement_influence_vector)
+        self.data.position = add_vectors(self.data.position, self.data.velocity)
 
     def run(self):
         """
         The logic that adjusts each drone's positioning based off of the drones within its field of vision
         :return:
         """
+        drone_send_info(self.socket, self.data)
         while 1:
             sleep(.1)
-            self.data.apply_velocity()
-            drone_send_info(self.socket, self.data)
             self.neighbors = drone_receive_info(self.socket)
+            self.droneRules()
+            drone_send_info(self.socket, self.data)
+
+
+def add_vectors(v1, v2):
+    """
+    Adds 2 vectors tuples together
+    :param v1: the first vector
+    :param v2: the second vector
+    :return: a new sum vector
+    """
+    newTuple = (v1[0] + v2[0],
+                v1[1] + v2[1],
+                v1[2] + v2[2])
+    return newTuple
 
 
 def init_drone_field(threads):
