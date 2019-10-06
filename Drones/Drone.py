@@ -104,7 +104,7 @@ class Drone(Thread):
             drone_send_info(self.socket, self.data)
 
 def init_drone_field(threads):
-    for i in range(1):
+    for i in range(2):
         newDrone = Drone([random.randint(-5, 5), random.randint(-5, 5), random.randint(-5, 5)],
                          [random.randint(100, 900), random.randint(100, 900), random.randint(100, 900)])
         threads.append(newDrone)
