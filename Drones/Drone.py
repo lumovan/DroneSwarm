@@ -12,7 +12,7 @@ This file contains the classes for the drone objects and the data objects that a
 import random
 from Networking.Networking import *
 from time import sleep
-from threading import Thread
+from threading import Thread, Lock
 import uuid
 
 # global variable for the maximum acceleration a drone can do
@@ -20,6 +20,7 @@ MAX_ACCEL = 50
 MIN_DISTANCE = 5
 FIELDDIM = 1000
 drone_threads = []
+lock = Lock()
 
 
 class DroneData:
@@ -61,6 +62,7 @@ class Drone(Thread):
         drone_id = uuid.uuid4().hex             # generates a unique ID based off the program run
         self.data = DroneData(velocity, position, drone_id)   # initialize data
         self.socket = drone_connect()                     # send connect message to server and initializes drone socket
+        print(self.socket.getsockname())
         drone_send_info(self.socket, self.data)           # send initial drone info to server
         self.neighbors = drone_receive_info(self.socket)  # receive initial neighbor list
 
@@ -70,23 +72,27 @@ class Drone(Thread):
         :return:
         """
         while 1:
-            sleep(.1)
-            print("hey")
-            self.data.apply_velocity()
-            drone_send_info(self.socket, self.data)
-            self.neighbors = drone_receive_info(self.socket)
+            lock.acquire()
+            if self.neighbors:
+                for data in self.neighbors:
+                    print(str(data.velocity) + str(data.position) + str(data.name))
+                lock.release()
+                self.data.apply_velocity()
+                drone_send_info(self.socket, self.data)
+                self.neighbors = drone_receive_info(self.socket)
 
 
 def init_drone_field():
-    for i in range(1, 2):
-        # sleep(1)
-        newDrone = Drone((i, i, i), (i, i, i))
-        newDrone.start()
+    for i in range(10):
+        newDrone = Drone((.1, .1, .1), (i, i, i))
+        drone_threads.append(newDrone)
+    for drone in drone_threads:
+        drone.start()
 
     while 1:
         pass
         # newDrone.start()
-        # drone_threads.append(newDrone)
+
 
 
 def main():
