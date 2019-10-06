@@ -13,17 +13,15 @@ MIN_DISTANCE = 5
 
 
 class DroneData:
-    position = (0.0, 0.0, 0.0)
-    velocity = (0.0, 0.0, 0.0)
-    name = ''
+    def __init__(self, velocity, position, name):
+        self.velocity = velocity
+        self.position = position
+        self.name = name
 
 
 class Drone:
-    def __init__(self, name, position, velocity):
-        self.data = DroneData()
-        self.data.velocity = velocity
-        self.data.position = position
-        self.data.name = name
+    def __init__(self, velocity, position, name):
+        self.data = DroneData(velocity, position, name)
         self.socket = drone_connect()
 
 # move drone forward in the x direction
@@ -32,16 +30,12 @@ class Drone:
 
 
 def main():
-    drone1 = Drone('One', (0.0, 0.0, 0.0), (0.0, 0.0, 0.0))
-    print(drone_send_info(drone1.socket, drone1.data))
+    # TEST DRONE COMMUNICATION ETC HERE
+    print("Beaner")
 
 
 if __name__ == '__main__':
     main()
-
-
-
-
 
 
 """

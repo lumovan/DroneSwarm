@@ -26,6 +26,7 @@ fieldPort = 6666
 def drone_connect():
     """
     Connects a drone to the server
+    Drone holds onto returned socket for future communication
     :return: the socket which is tied to the server
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -47,4 +48,4 @@ def drone_send_info(s, data):
     :return: success status (None == success)
     """
     data_string = pickle.dumps(data)
-    return s.send(data_string)
+    return s.sendall(data_string)
