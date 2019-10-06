@@ -66,10 +66,10 @@ class DBHelper:
 
     def update(self, droneID, dronePos, droneVel):
         droneID = "\"" + droneID + "\""
-        # sql = "UPDATE droneslocation SET locX = {}, locY = {}, locZ = {}, dirX = {}, dirY = {}, dirZ = {} WHERE id = {}".format(
-        #     dronePos[0], dronePos[1], dronePos[2], droneVel[0], droneVel[1], droneVel[2], droneID)
-        sql = "UPDATE droneslocation SET locX = {}, locY = {}, locZ = {} WHERE id = {}".format(
-            dronePos[0], dronePos[1], dronePos[2], droneID)
+        sql = "UPDATE droneslocation SET locX = {}, locY = {}, locZ = {}, dirX = {}, dirY = {}, dirZ = {} WHERE id = {}".format(
+            dronePos[0], dronePos[1], dronePos[2], droneVel[0], droneVel[1], droneVel[2], droneID)
+        # sql = "UPDATE droneslocation SET locX = {}, locY = {}, locZ = {} WHERE id = {}".format(
+        #     dronePos[0], dronePos[1], dronePos[2], droneID)
         self.c.execute(sql)
         self.mydb.commit()
 

@@ -14,6 +14,7 @@ import socket  # for sockets
 import pickle  # for sending drone data to server
 
 fieldIP = '192.168.137.5'
+# fieldIP = 'localhost'
 fieldPort = 6666
 
 
