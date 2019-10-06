@@ -33,7 +33,7 @@ class DBHelper:
         neighbors = []
         for tb in self.c:
             neighbors.append(DroneData(tb[0], tb[1:4], tb[4:7]))
-        print(neighbors)
+        # print(neighbors)
         return neighbors
 
     def getNumDrones(self):

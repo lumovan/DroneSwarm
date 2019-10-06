@@ -58,17 +58,22 @@ class ServerThread(Thread):
                         break
 
 
-
-
     def sendNeighborghs(self, id, location):
         droneList = self.db.getLocalDrones(id, location)
         numDrones = len(droneList)
+        print(numDrones)
 
         self.conn.sendall(str.encode(str(numDrones)))
-        time.sleep(.05)
 
-        data = pickle.dumps(droneList)
-        self.conn.sendall(data)
+        # check to see
+        while True:
+            data = self.conn.recv(20)
+            if data:
+                break
+
+        if numDrones > 0:
+            data = pickle.dumps(droneList)
+            self.conn.sendall(data)
 
 
 
