@@ -8,7 +8,9 @@ Python Version: 3.7
 The networking framework for our drones.  Middleman for the drones and the field.
 """
 
+from Drones.Drone import DroneData #for testing REMOVE LATER
 import socket  # for sockets
+import pickle  # for sending drone data to server
 from time import sleep
 
 # # # # # # # # # # # # # # # # # # Networking Thoughts Box # # # # # # # # # # # # # # # # # # # # #
@@ -25,9 +27,8 @@ fieldPort = 6666
 
 def drone_connect():
     """
-    Returns a socket which is tied to the server.
-    Drone holds this socket in a variable for future communication.
-    :return:
+    Connects a drone to the server
+    :return: the socket which is tied to the server
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -40,27 +41,37 @@ def drone_connect():
     return s
 
 
-def drone_send_info(s, message):
+def drone_send_info(s, data):
     """
-    Sends a message to the server
+    Sends a drone data object to the server
     :param s: the socket on which the drone is connected to the server
-    :param message: the message to be sent
+    :param data: the data to be sent
     :return: success status (None == success)
     """
-    return s.sendall(str.encode(str(message)))
+    data_string = pickle.dumps(data)
+    return s.send(data_string)
 
 
-def main():
-    s1 = drone_connect()
-    s2 = drone_connect()
-    s3 = drone_connect()
-    print(drone_send_info(s1, "drone 1 checking in"))
-    print(drone_send_info(s2, "drone 2 checking in"))
-    print(drone_send_info(s3, "drone 3 checking in"))
-    print(s1.getsockname())
-    print(s2.getsockname())
-    print(s3.getsockname())
+# def main():
+#     dronelist = []
+#     for i in range(1):
+#         dronelist.append(drone_connect())
+# 
+#     for i in range(10):
+#         data = DroneData()
+#         data.id = ""
+#         num = 0.0
+#         data.position = (num, num, num)
+#         data.velocity = (num, num, num)
+#         print(drone_send_info(dronelist[0], data))
+#         # sleep(1)
+#     dronelist[0].close
+
+    # print(drone_send_info(s2, "drone 2 checking in"))
+    # s2.close()
+    # print(drone_send_info(s3, "drone 3 checking in"))
+    # s3.close()
 
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
