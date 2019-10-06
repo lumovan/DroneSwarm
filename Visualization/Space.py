@@ -10,6 +10,7 @@ from Database.DBHelper import *
 from Database.connection import mydb
 
 TCP_IP = "192.168.137.5"
+# TCP_IP = "localhost"
 TCP_PORT = 6666
 BUFFER_SIZE = 1024
 

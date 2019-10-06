@@ -13,6 +13,7 @@ from Networking.Networking import *
 from time import sleep
 from threading import Thread, Lock
 import uuid
+import numpy as np
 
 # global variable for the maximum acceleration a drone can do
 MAX_ACCEL = 50
@@ -28,6 +29,8 @@ class DroneData:
         self.velocity = velocity
         self.position = position
         self.name = name
+        self.maxSpeed = 10
+        self.maxSteer = 20
 
 
 class Drone(Thread):
@@ -55,6 +58,9 @@ class Drone(Thread):
 
     def droneRules(self):
         # stay in the box
+        currPos = np.array([self.data.position[0], self.data.position[1], self.data.position[2]])
+        currVel = np.array([self.data.velocity[0], self.data.velocity[1], self.data.velocity[2]])
+
         movement_influence_vector = []
         for i in range(3):
             if self.data.position[i] + 50 >= FIELDDIM:
@@ -67,8 +73,11 @@ class Drone(Thread):
             else:
                 movement_influence_vector.append(0)
 
-        self.data.velocity = add_vectors(self.data.velocity, movement_influence_vector)
-        self.data.position = add_vectors(self.data.position, self.data.velocity)
+        movement_influence_vector = np.asarray(movement_influence_vector)
+        self.steerTowards(movement_influence_vector)
+
+    def steerTowards(self, vector):
+        return vector.normalize()
 
     def run(self):
         """
@@ -77,28 +86,14 @@ class Drone(Thread):
         """
         drone_send_info(self.socket, self.data)
         while 1:
-            sleep(.1)
+            sleep(1)
             self.neighbors = drone_receive_info(self.socket)
             self.droneRules()
             drone_send_info(self.socket, self.data)
 
-
-def add_vectors(v1, v2):
-    """
-    Adds 2 vectors tuples together
-    :param v1: the first vector
-    :param v2: the second vector
-    :return: a new sum vector
-    """
-    newTuple = (v1[0] + v2[0],
-                v1[1] + v2[1],
-                v1[2] + v2[2])
-    return newTuple
-
-
 def init_drone_field(threads):
-    for i in range(3, 4):
-        newDrone = Drone((-10.0, 0.0, -5.0), (100, 100, 100))
+    for i in range(1):
+        newDrone = Drone((-5.0, 0.0, -5.0), (100, 100, 100))
         threads.append(newDrone)
     for drone in threads:
         drone.start()
