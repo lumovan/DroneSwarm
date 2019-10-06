@@ -68,12 +68,12 @@ class Drone(Thread):
         movement_influence_vector = []
         for i in range(3):
             if self.data.position[i] + 50 >= FIELDDIM:
-                movement_influence_vector.append(-.5 * (1/(FIELDDIM - self.data.position[i])))
+                movement_influence_vector.append(-.5 / (1/(FIELDDIM - self.data.position[i])))
             else:
                 movement_influence_vector.append(0)
 
             if self.data.position[i] - 50 <= 0:
-                movement_influence_vector.append(.5 * (1/(self.data.position[i])))
+                movement_influence_vector.append(.5 / (1/(self.data.position[i])))
             else:
                 movement_influence_vector.append(0)
 
