@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Drones
 {
@@ -6,6 +7,8 @@ namespace Drones
     {
         internal String id;
         internal int droneNum;
-        
+        internal Vector3 position;
+        internal Vector3 velocity;
+
     }
 }
