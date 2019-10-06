@@ -9,6 +9,7 @@ namespace Drones
 {
     public class CreateDrone : MonoBehaviour
     {
+        public GameObject Drone;
         private Vector3 location = new Vector3(0,0,0);
         private MySqlConnection _connection = null;
         private MySqlDataReader _reader;
@@ -26,19 +27,20 @@ namespace Drones
             _connectionString.Database = "prep";
             _connection = new MySqlConnection(_connectionString.ToString());
             _connection.Open();
-            Debug.Log("Connection state:" +_connection.State);
-            _command =  new MySqlCommand("SELECT id FROM drones", _connection);;
+            Debug.Log("Connection state:" + _connection.State);
+            _command = new MySqlCommand("SELECT id FROM drones", _connection);
+            ;
             _reader = _command.ExecuteReader();
             while (_reader.Read())
             {
                 Debug.Log("Hello");
                 drone.id = _reader.ToString();
                 drone.droneNum = _uniqueNum++;
-                GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-                sphere.name = drone.droneNum.ToString();
-                sphere.transform.position = new Vector3(location.x++,location.y,location.z);
+
+                Instantiate(Drone, new Vector3(location.x++, location.y, location.z), Quaternion.identity);
+                Drone.name = drone.droneNum.ToString();
+
             }
-        
         }
 
         // Update is called once per frame
