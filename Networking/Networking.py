@@ -2,13 +2,14 @@
 File name: Networking.py
 Author: Kyle Ferguson ~ krf6081@rit.edu
 Date created: 10/05/2019
-Date last modified: 10/05/2019
+Date last modified: 10/06/2019
 Python Version: 3.7
 
 The networking framework for our drones.  Middleman for the drones and the field.
 """
 
 import socket  # for sockets
+import pickle  # for sending drone data to server
 from time import sleep
 
 # # # # # # # # # # # # # # # # # # Networking Thoughts Box # # # # # # # # # # # # # # # # # # # # #
@@ -18,16 +19,15 @@ from time import sleep
 #       -accept array list of drone locations from field                                            #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-
 fieldIP = '192.168.137.5' #1036.252.145 209.217.218.34
 fieldPort = 6666
 
 
 def drone_connect():
     """
-    Returns a socket which is tied to the server.
-    Drone holds this socket in a variable for future communication.
-    :return:
+    Connects a drone to the server
+    Drone holds onto returned socket for future communication
+    :return: the socket which is tied to the server
     """
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
@@ -40,27 +40,12 @@ def drone_connect():
     return s
 
 
-def drone_send_info(s, message):
+def drone_send_info(s, data):
     """
-    Sends a message to the server
+    Sends a drone data object to the server
     :param s: the socket on which the drone is connected to the server
-    :param message: the message to be sent
+    :param data: the data to be sent
     :return: success status (None == success)
     """
-    return s.sendall(str.encode(str(message)))
-
-
-def main():
-    s1 = drone_connect()
-    s2 = drone_connect()
-    s3 = drone_connect()
-    print(drone_send_info(s1, "drone 1 checking in"))
-    print(drone_send_info(s2, "drone 2 checking in"))
-    print(drone_send_info(s3, "drone 3 checking in"))
-    print(s1.getsockname())
-    print(s2.getsockname())
-    print(s3.getsockname())
-
-
-if __name__ == '__main__':
-    main()
+    data_string = pickle.dumps(data)
+    return s.sendall(data_string)
