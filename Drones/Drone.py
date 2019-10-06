@@ -13,10 +13,12 @@ from Networking.Networking import *
 from time import sleep
 from threading import Thread, Lock
 import uuid
+import random
+import math
 import numpy as np
 
 # global variable for the maximum acceleration a drone can do
-MAX_ACCEL = 50
+MAX_ACCEL = 1
 MIN_DISTANCE = 5
 FIELDDIM = 1000
 
@@ -58,26 +60,36 @@ class Drone(Thread):
 
     def droneRules(self):
         # stay in the box
-        currPos = np.array([self.data.position[0], self.data.position[1], self.data.position[2]])
-        currVel = np.array([self.data.velocity[0], self.data.velocity[1], self.data.velocity[2]])
+        # currPos = np.array([self.data.position[0], self.data.position[1], self.data.position[2]])
+        # currVel = np.array([self.data.velocity[0], self.data.velocity[1], self.data.velocity[2]])
 
-        movement_influence_vector = []
+        # movement_influence_vector = []
         for i in range(3):
             if self.data.position[i] + 50 >= FIELDDIM:
-                movement_influence_vector.append(-100 / (abs(FIELDDIM - self.data.position[i]) + 1))
-            else:
-                movement_influence_vector.append(0)
+                self.data.velocity[i] += min((-100 / (abs(FIELDDIM - self.data.position[i]) + 1)), -MAX_ACCEL)
 
             if self.data.position[i] - 50 <= 0:
-                movement_influence_vector.append(100 / (abs(self.data.position[i]) + 1))
-            else:
-                movement_influence_vector.append(0)
+                self.data.velocity[i] += max((100 / (abs(self.data.position[i]) + 1)), MAX_ACCEL)
 
-        movement_influence_vector = np.asarray(movement_influence_vector)
-        self.steerTowards(movement_influence_vector)
+        self.data.position = self.addVec(self.data.position, self.data.velocity)
 
-    def steerTowards(self, vector):
-        return vector.normalize()
+    def addVec(self, v1, v2):
+        v1[0] += v2[0]
+        v1[1] += v2[1]
+        v1[2] += v2[2]
+
+        return v1
+
+    def limitForce(self):
+        pass
+
+    def getMagnitude(self, vector):
+        return math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2])
+
+    def normalize(self, vector):
+        mag = self.getMagnitude(vector)
+        return [vector[0]/mag, vector[1]/mag, vector[2]/mag]
+
 
     def run(self):
         """
@@ -86,14 +98,15 @@ class Drone(Thread):
         """
         drone_send_info(self.socket, self.data)
         while 1:
-            sleep(1)
             self.neighbors = drone_receive_info(self.socket)
             self.droneRules()
+            sleep(.1)
             drone_send_info(self.socket, self.data)
 
 def init_drone_field(threads):
     for i in range(1):
-        newDrone = Drone((-5.0, 0.0, -5.0), (100, 100, 100))
+        newDrone = Drone([random.randint(-5, 5), random.randint(-5, 5), random.randint(-5, 5)],
+                         [random.randint(100, 900), random.randint(100, 900), random.randint(100, 900)])
         threads.append(newDrone)
     for drone in threads:
         drone.start()
