@@ -9,12 +9,17 @@ Python Version: 3.7
 
 This file contains the classes for the drone objects and the data objects that are sent to the server.
 """
-
+import random
 from Networking.Networking import *
+from time import sleep
+from threading import Thread
 import uuid
+
 # global variable for the maximum acceleration a drone can do
 MAX_ACCEL = 50
 MIN_DISTANCE = 5
+FIELDDIM = 1000
+drone_threads = []
 
 
 class DroneData:
@@ -26,52 +31,68 @@ class DroneData:
         self.position = position
         self.name = name
 
+    def apply_velocity(self):
+        """
+        Adds velocity to position
+        :return: None
+        """
+        newTuple = (self.position[0] + self.velocity[0],
+                    self.position[1] + self.velocity[1],
+                    self.position[2] + self.velocity[2])
+        self.position = newTuple
 
-class Drone:
+
+class Drone(Thread):
     """
     Drone contains functionality for drone movement and keeps track of the following fields:
-        - Data ~ an instance of DroneData that keeps track of velocity, position, and name of this drone
+        - Data ~ an instance of DroneData that keeps track of velocity, position,
+            and the name of this drone (a unique identifier generated upon drone creation)
         - Socket ~ the connection this drone has to the Space server
         - Neighbors ~ a list of drones within the drone's view distance that the drone uses to position and move itself
     """
-    def __init__(self, velocity, position, name):
+    def __init__(self, velocity, position):
+        Thread.__init__(self)
         """
         Initializes drone data, connects to server, and sends data object to server
         Velocity, position, and name can be accessed through drone_object.data.x where x = field to be accessed
         :param velocity: the initial velocity of the drone
         :param position: the initial position of the drone
-        :param name: the name of the drone
         """
-        # id = "\"" + uuid.uuid4().hex + "\""            # generates a unique ID based off the program run
-        self.data = DroneData(velocity, position, name)  # initialize data
-        self.socket = drone_connect()                    # send connect message to server and initializes drone socket
-        drone_send_info(self.socket, self.data)          # send initial drone info to server
-        # self.neighbors = KYLE IS IMPLEMENTING RECEPTION OF NEIGHBOR LIST FROM SERVER
+        drone_id = uuid.uuid4().hex             # generates a unique ID based off the program run
+        self.data = DroneData(velocity, position, drone_id)   # initialize data
+        self.socket = drone_connect()                     # send connect message to server and initializes drone socket
+        drone_send_info(self.socket, self.data)           # send initial drone info to server
+        self.neighbors = drone_receive_info(self.socket)  # receive initial neighbor list
 
-# move drone forward in the x direction
-    def update(self):
+    def run(self):
         """
         The logic that adjusts each drone's positioning based off of the drones within its field of vision
         :return:
         """
-        self.data.velocity = (1.0, 0.0, 0.0)
+        while 1:
+            sleep(.1)
+            print("hey")
+            self.data.apply_velocity()
+            drone_send_info(self.socket, self.data)
+            self.neighbors = drone_receive_info(self.socket)
+
+
+def init_drone_field():
+    for i in range(1, 2):
+        # sleep(1)
+        newDrone = Drone((i, i, i), (i, i, i))
+        newDrone.start()
+
+    while 1:
+        pass
+        # newDrone.start()
+        # drone_threads.append(newDrone)
 
 
 def main():
     # TEST DRONE COMMUNICATION ETC HERE
-    print("Beaner")
+    init_drone_field()
 
 
 if __name__ == '__main__':
     main()
-
-
-"""
-average = 0
-        if len(drone_list) != 0:
-            for i in range(0, len(drone_list)):
-                avg = 0.0
-                for j in range(len(getattr(drone_list[i], 'position'))):
-                    avg += j
-                average += avg / 3
-"""
