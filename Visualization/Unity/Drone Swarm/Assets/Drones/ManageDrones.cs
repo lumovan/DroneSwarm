@@ -8,13 +8,17 @@ namespace Drones
     {
         public GameObject Drone;
         private List<Drone> drones;
+        private int numDrones = 0;
         private CreateDrone _createDrone;
         private DroneLocationUpdate _locationUpdate;
         private List<GameObject> _objects = new List<GameObject>();
         void Start()
         {
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = 9999;
             _createDrone = new CreateDrone();
             drones = _createDrone.createList();
+            numDrones = drones.Count;
             _locationUpdate = new DroneLocationUpdate(drones);
             _locationUpdate.UpdateLocation();
             drones = _locationUpdate.getDrones();
@@ -25,8 +29,6 @@ namespace Drones
                 _objects.Add(_drone);
                 var name = _drone.AddComponent<Name>();
                 name.name = drone.droneNum.ToString();
-
-
             }
         }
 
@@ -38,6 +40,20 @@ namespace Drones
             {
                 var obj = GameObject.Find(drone.id);
                 obj.transform.position = drone.position;
+            }
+            
+            var tempDrones = _createDrone.addNewDrones(drones, _objects);
+            if (tempDrones.Count != 0)
+            {
+                foreach (var drone in tempDrones)
+                {
+                    GameObject _drone = Instantiate(Drone, drone.position, Quaternion.identity);
+                    _drone.name = drone.id; 
+                    _objects.Add(_drone);
+                    var name = _drone.AddComponent<Name>();
+                    name.name = drone.droneNum.ToString();
+                }
+                drones.AddRange(tempDrones);
             }
         }
     }

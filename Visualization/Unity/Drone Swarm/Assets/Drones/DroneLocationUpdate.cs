@@ -43,7 +43,7 @@ namespace Drones
             _connectionString.Server = "192.168.137.5";
             _connectionString.UserID = "Bois";
             _connectionString.Password = "HackUpstate";
-            _connectionString.Database = "prep";
+            _connectionString.Database = "drones";
             _connection = new MySqlConnection(_connectionString.ToString());
             _connection.Open();
             foreach (var drone in drones)
@@ -55,15 +55,16 @@ namespace Drones
                 _reader = _command.ExecuteReader();
                 while (_reader.Read())
                 {
-                    Debug.Log("Redoing position");
-                    drone.position = new Vector3(Convert.ToInt32(_reader["locX"]),
+                    drone.position = new Vector3(Convert.ToSingle(_reader["locX"]),
                         Convert.ToInt32(_reader["locY"]),
                         Convert.ToInt32(_reader["locZ"]));
-                    drone.velocity = new Vector3(Convert.ToInt32(_reader["dirX"]),
+                    drone.velocity = new Vector3(Convert.ToSingle(_reader["dirX"]),
                         Convert.ToInt32(_reader["dirY"]),
                         Convert.ToInt32(_reader["dirZ"]));
                 }
+                _reader.Close();
             }
+            
             _connection.Close();
         }
 
