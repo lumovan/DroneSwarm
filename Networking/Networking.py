@@ -44,15 +44,17 @@ def drone_connect():
 def drone_disconnect(s):
     """
     Disconnects a drone from the server
-    :param s:
+    :param s: the socket through which the drone is connected to the server
     :return:
     """
+    s.shutdown()
+    s.close()
 
 
 def drone_send_info(s, data):
     """
     Sends a drone data object to the server
-    :param s: the socket on which the drone is connected to the server
+    :param s: the socket through which the drone is connected to the server
     :param data: the data to be sent
     :return: success status (None == success)
     """
@@ -65,24 +67,27 @@ def drone_receive_info(s):
     Receives neighbor information from the Space server in two steps:
         1) receives number of drones data classes being sent in step 2 (the number of neighbors around the drone)
         2) receives a list of neighbors
-    :param s: the socket on which the drone is connected to the server
+    :param s: the socket through which the drone is connected to the server
     :return: the list of neighbors (as DroneData objects)
     """
     number_string = s.recv(50)  # Step 1 ~ received initially as a string
     number = -1
+    print("Num drones string: ", number_string)
     if number_string:
         number = int(number_string)
         print("Number of drones incoming: " + str(number))
+        s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received
     else:
         print("NO NUMBER RECEIVED")
         return None
 
-    if number != -1:
-        drone_list_pickled = s.recv(number * 200)  # Step 2
-        if drone_list_pickled:
-            drone_list = pickle.loads(drone_list_pickled)  # unpickling the list from binary data back to a list
-            if isinstance(drone_list, list):
-                return drone_list
-            else:
-                print("DID NOT RECEIVE A LIST IN THE PICKLE, MARK!")
-                return None
+    if number == 0:
+        return None
+    drone_list_pickled = s.recv(number * 200)  # Step 2
+    if drone_list_pickled:
+        drone_list = pickle.loads(drone_list_pickled)  # unpickling the list from binary data back to a list
+        if isinstance(drone_list, list):
+            return drone_list
+        else:
+            print("DID NOT RECEIVE A LIST IN THE PICKLE, MARK!")
+            return None

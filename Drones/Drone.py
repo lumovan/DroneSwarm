@@ -26,6 +26,17 @@ class DroneData:
         self.position = position
         self.name = name
 
+    def apply_velocity(self):
+        """
+        Adds velocity to position
+        :return: None
+        """
+        newTuple = (self.position[0] + self.velocity[0],
+                    self.position[1] + self.velocity[1],
+                    self.position[2] + self.velocity[2])
+        self.position = newTuple
+
+
 
 class Drone:
     """
@@ -41,7 +52,6 @@ class Drone:
         Velocity, position, and name can be accessed through drone_object.data.x where x = field to be accessed
         :param velocity: the initial velocity of the drone
         :param position: the initial position of the drone
-        :param name: the name of the drone
         """
         drone_id = uuid.uuid4().hex             # generates a unique ID based off the program run
         self.data = DroneData(velocity, position, drone_id)   # initialize data
@@ -49,20 +59,28 @@ class Drone:
         drone_send_info(self.socket, self.data)           # send initial drone info to server
         self.neighbors = drone_receive_info(self.socket)  # receive initial neighbor list
 
-# move drone forward in the x direction
     def update(self):
         """
         The logic that adjusts each drone's positioning based off of the drones within its field of vision
         :return:
         """
-        self.data.velocity = (1.0, 0.0, 0.0)
+        self.data.apply_velocity()
+        print("My data: ", self.data.velocity, self.data.position)
+        drone_send_info(self.socket, self.data)
+        self.neighbors = drone_receive_info(self.socket)
 
 
 def main():
     # TEST DRONE COMMUNICATION ETC HERE
     testDrone = Drone((1.0, 0.0, 1.0), (100.0, 100.0, 100.0))
-    for droneData in testDrone.neighbors:
-        print(droneData.name, droneData.position, droneData.velocity)
+    while True:
+        if testDrone.neighbors:
+            for droneData in testDrone.neighbors:
+                print(droneData.name, droneData.position, droneData.velocity)
+        else:
+            print("No neighbors :(")
+        testDrone.update()
+        sleep(.1)
 
 
 if __name__ == '__main__':
