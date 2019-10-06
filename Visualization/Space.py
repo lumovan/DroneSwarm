@@ -50,7 +50,7 @@ class ServerThread(Thread):
 
             # receive next location
             while True:
-                data = self.conn.recv(200)
+                data = self.conn.recv(1024)
                 if data:
                     data = pickle.loads(data)
                     if isinstance(data, DroneData):
@@ -61,20 +61,20 @@ class ServerThread(Thread):
 
 
     def sendNeighborghs(self, id, location):
-        droneList = self.db.getLocalDrones(id, location)
+        droneList = self.db.getLocalDronesSquare(id, location)
         numDrones = len(droneList)
         # print(numDrones)
 
         self.conn.sendall(str.encode(str(numDrones)))
 
         # check to see
-        while True:
-            data = self.conn.recv(20)
-            if data:
-                break
-
         if numDrones > 0:
-            data = pickle.dumps(droneList)
+            while True:
+                data = self.conn.recv(20)
+                if data:
+                    break
+
+            data = pickle.dumps(droneList, protocol=pickle.HIGHEST_PROTOCOL)
             self.conn.sendall(data)
 
 
@@ -86,6 +86,9 @@ def main():
     tcpServer.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     tcpServer.bind((TCP_IP, TCP_PORT))
     threads = []
+
+    tempHelper = DBHelper()
+    tempHelper.clearTables()
 
     while True:
         tcpServer.listen(4)
