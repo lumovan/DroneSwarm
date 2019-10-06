@@ -9,7 +9,6 @@ Python Version: 3.7
 
 This file contains the classes for the drone objects and the data objects that are sent to the server.
 """
-import random
 from Networking.Networking import *
 from time import sleep
 from threading import Thread, Lock
@@ -19,8 +18,6 @@ import uuid
 MAX_ACCEL = 50
 MIN_DISTANCE = 5
 FIELDDIM = 1000
-drone_threads = []
-lock = Lock()
 
 
 class DroneData:
@@ -72,22 +69,19 @@ class Drone(Thread):
         :return:
         """
         while 1:
-            lock.acquire()
-            if self.neighbors:
-                for data in self.neighbors:
-                    print(str(data.velocity) + str(data.position) + str(data.name))
-                lock.release()
-                self.data.apply_velocity()
-                drone_send_info(self.socket, self.data)
-                self.neighbors = drone_receive_info(self.socket)
+            sleep(.1)
+            self.data.apply_velocity()
+            drone_send_info(self.socket, self.data)
+            self.neighbors = drone_receive_info(self.socket)
 
 
-def init_drone_field():
-    for i in range(10):
-        newDrone = Drone((.1, .1, .1), (i, i, i))
-        drone_threads.append(newDrone)
-    for drone in drone_threads:
+def init_drone_field(threads):
+    for i in range(3, 5):
+        newDrone = Drone((.01, .01, .01), (i, i, i))
+        threads.append(newDrone)
+    for drone in threads:
         drone.start()
+        sleep(.1)
 
     while 1:
         pass
@@ -96,8 +90,9 @@ def init_drone_field():
 
 
 def main():
+    drone_threads = []
     # TEST DRONE COMMUNICATION ETC HERE
-    init_drone_field()
+    init_drone_field(drone_threads)
 
 
 if __name__ == '__main__':
