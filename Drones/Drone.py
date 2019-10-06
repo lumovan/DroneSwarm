@@ -63,6 +63,16 @@ class Drone(Thread):
         drone_send_info(self.socket, self.data)           # send initial drone info to server
         self.neighbors = drone_receive_info(self.socket)  # receive initial neighbor list
 
+    def droneRules(self):
+        # stay in the box
+        movement_influence_vector = []
+        for i in range(3):
+            if self.data.position[i] + 50 >= FIELDDIM:
+                movement_influence_vector.append(1)
+            else:
+                movement_influence_vector.append(0)
+
+
     def run(self):
         """
         The logic that adjusts each drone's positioning based off of the drones within its field of vision
@@ -85,8 +95,6 @@ def init_drone_field(threads):
 
     while 1:
         pass
-        # newDrone.start()
-
 
 
 def main():
