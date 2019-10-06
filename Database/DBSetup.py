@@ -5,7 +5,7 @@ mydb = mysql.connector.connect(
     host="localhost",
     user="Bois",
     passwd="HackUpstate",
-    database="drones",
+    database="prep",
     auth_plugin="mysql_native_password"
 )
 

@@ -4,15 +4,17 @@ Used by all the drones to communicate between all the drones near it
 import socket
 import pickle
 import time
-from threading import Thread
+from threading import Lock, Thread
 from Drones.Drone import DroneData
-from Database.DBHelper import DBHelper
+from Database.DBHelper import *
+from Database.connection import mydb
 
 TCP_IP = "192.168.137.5"
 TCP_PORT = 6666
 BUFFER_SIZE = 1024
 
 FIELDDIM = 1000
+lock = Lock()
 
 
 class ServerThread(Thread):
@@ -21,7 +23,8 @@ class ServerThread(Thread):
         self.ip = ip
         self.conn = conn
         self.port = port
-        self.db = DBHelper()
+        self.db = DBHelper(mydb, mydb.cursor())
+
         print("New socket thread started for " + ip + ":" + str(port))
 
     def run(self):
@@ -37,7 +40,9 @@ class ServerThread(Thread):
                     print("Server Received Initial: ", data.position, "\tvel: ", data.velocity, "\tName: ", data.name)
                     currLoc = data.position
                     id = data.name
+                    lock.acquire()
                     self.db.addDrone(data.name, data.position, data.velocity)
+                    lock.release()
                 break
             else:
                 break
@@ -56,12 +61,18 @@ class ServerThread(Thread):
                     if isinstance(data, DroneData):
                         currLoc = data.position
                         # print("Server Received New Position: ", data.position, "\tvel: ", data.velocity, "\tName: ", data.name)
+                        lock.acquire()
                         self.db.update(data.name, data.position, data.velocity)
+                        lock.release()
                         break
 
 
     def sendNeighborghs(self, id, location):
+        # droneList = getLocalDronesSphere(id, location)
+        lock.acquire()
         droneList = self.db.getLocalDronesSquare(id, location)
+        lock.release()
+
         numDrones = len(droneList)
         # print(numDrones)
 
@@ -87,12 +98,13 @@ def main():
     tcpServer.bind((TCP_IP, TCP_PORT))
     threads = []
 
-    tempHelper = DBHelper()
-    tempHelper.clearTables()
+    cursor = mydb.cursor()
+    clearTables(mydb, cursor)
 
     while True:
         tcpServer.listen(4)
         (conn, (ip, port)) = tcpServer.accept()
+
         newthread = ServerThread(ip, port, conn)
         newthread.start()
         threads.append(newthread)
