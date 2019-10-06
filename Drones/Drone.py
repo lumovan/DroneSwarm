@@ -7,7 +7,7 @@ Date created: 10/05/2019
 Date last modified: 10/06/2019
 Python Version: 3.7
 
-JACOB COMMENT HERE
+This file contains the classes for the drone objects and the data objects that are sent to the server.
 """
 
 from Networking.Networking import *
@@ -50,7 +50,7 @@ class Drone:
 # move drone forward in the x direction
     def update(self):
         """
-        JACOB COMMENT HERE
+        The logic that adjusts each drone's positioning based off of the drones within its field of vision
         :return:
         """
         self.data.velocity = (1.0, 0.0, 0.0)
