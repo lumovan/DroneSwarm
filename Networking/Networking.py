@@ -33,11 +33,9 @@ def drone_connect():
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        print("Socket successfully created")
     except socket.error as err:
         print("socket creation failed with error %s" % err)
     s.connect((fieldIP, fieldPort))
-    print("connected to " + fieldIP)
     return s
 
 
@@ -58,7 +56,8 @@ def drone_send_info(s, data):
     :param data: the data to be sent
     :return: success status (None == success)
     """
-    data_string = pickle.dumps(data)
+    protocol = pickle.HIGHEST_PROTOCOL
+    data_string = pickle.dumps(data, protocol)
     return s.sendall(data_string)
 
 
@@ -68,19 +67,19 @@ def drone_receive_info(s):
         1) receives number of drones data classes being sent in step 2 (the number of neighbors around the drone)
         2) receives a list of neighbors
     :param s: the socket through which the drone is connected to the server
-    :return: the list of neighbors (as DroneData objects)
+    :return: the list of neighbors (as DroneData objects) - None means no neighbors or error
     """
     number_string = s.recv(50)  # Step 1 ~ received initially as a string
     number = -1
     if number_string:
         number = int(number_string)
+        if number == 0:  # if no neighbors, skip the rest of the process
+            return None
         s.sendall(str.encode(str(1)))  # send a confirmation to server that number was received ~ message means nothing
     else:
         print("NO NUMBER RECEIVED")
         return None
 
-    if number == 0:
-        return None
     drone_list_pickled = s.recv(number * 200)  # Step 2
     if drone_list_pickled:
         drone_list = pickle.loads(drone_list_pickled)  # unpickling the list from binary data back to a list
