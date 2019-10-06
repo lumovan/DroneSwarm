@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 5f674f9cef41d3743b943c0d52be47b0
+guid: 5b6178d21d39e83438711ea758e3460e
 ModelImporter:
   serializedVersion: 26
   internalIDToNameTable: []
@@ -46,13 +46,13 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    keepQuads: 1
-    weldVertices: 0
+    keepQuads: 0
+    weldVertices: 1
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
-    meshOptimizationFlags: 0
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -60,7 +60,7 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
-    normalSmoothAngle: 22
+    normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
@@ -87,7 +87,7 @@ ModelImporter:
     hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 1
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

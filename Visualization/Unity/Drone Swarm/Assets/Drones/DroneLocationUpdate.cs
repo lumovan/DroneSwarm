@@ -55,12 +55,12 @@ namespace Drones
                 _reader = _command.ExecuteReader();
                 while (_reader.Read())
                 {
-                    drone.position = new Vector3(Convert.ToSingle(_reader["locX"]),
-                        Convert.ToInt32(_reader["locY"]),
-                        Convert.ToInt32(_reader["locZ"]));
-                    drone.velocity = new Vector3(Convert.ToSingle(_reader["dirX"]),
-                        Convert.ToInt32(_reader["dirY"]),
-                        Convert.ToInt32(_reader["dirZ"]));
+                    drone.position = new Vector3(Convert.ToSingle(_reader["locX"])/10f,
+                        Convert.ToSingle(_reader["locY"])/10f,
+                        Convert.ToSingle(_reader["locZ"])/10f);
+                    drone.velocity = new Vector3(Convert.ToSingle(_reader["dirX"])/10f,
+                        Convert.ToSingle(_reader["dirY"])/10f,
+                        Convert.ToSingle(_reader["dirZ"]))/10f;
                 }
                 _reader.Close();
             }

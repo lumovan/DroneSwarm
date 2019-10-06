@@ -9,17 +9,18 @@ namespace Drones
         public GameObject Drone;
         private List<Drone> drones;
         private int numDrones = 0;
-        private CreateDrone _createDrone;
-        private DroneLocationUpdate _locationUpdate;
+        private CreateDrone _createDrone = null;
+        private DroneLocationUpdate _locationUpdate = null;
         private List<GameObject> _objects = new List<GameObject>();
         void Start()
         {
             QualitySettings.vSyncCount = 0;
-            Application.targetFrameRate = 9999;
+            Application.targetFrameRate = 100000;
             _createDrone = new CreateDrone();
             drones = _createDrone.createList();
             numDrones = drones.Count;
             _locationUpdate = new DroneLocationUpdate(drones);
+            Debug.Log("HEYOO");
             _locationUpdate.UpdateLocation();
             drones = _locationUpdate.getDrones();
             foreach (var drone in drones)
