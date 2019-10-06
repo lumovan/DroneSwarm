@@ -12,6 +12,8 @@ TCP_IP = "192.168.137.5"
 TCP_PORT = 6666
 BUFFER_SIZE = 1024
 
+FIELDDIM = 1000
+
 
 class ServerThread(Thread):
     def __init__(self, ip, port, conn):
@@ -44,7 +46,7 @@ class ServerThread(Thread):
         while True:
             # send Neighbors
             self.sendNeighborghs(id, currLoc)
-            print("sent Neighbors")
+            # print("sent Neighbors")
 
             # receive next location
             while True:
@@ -53,7 +55,7 @@ class ServerThread(Thread):
                     data = pickle.loads(data)
                     if isinstance(data, DroneData):
                         currLoc = data.position
-                        print("Server Received New Position: ", data.position, "\tvel: ", data.velocity, "\tName: ", data.name)
+                        # print("Server Received New Position: ", data.position, "\tvel: ", data.velocity, "\tName: ", data.name)
                         self.db.update(data.name, data.position, data.velocity)
                         break
 
@@ -61,7 +63,7 @@ class ServerThread(Thread):
     def sendNeighborghs(self, id, location):
         droneList = self.db.getLocalDrones(id, location)
         numDrones = len(droneList)
-        print(numDrones)
+        # print(numDrones)
 
         self.conn.sendall(str.encode(str(numDrones)))
 
